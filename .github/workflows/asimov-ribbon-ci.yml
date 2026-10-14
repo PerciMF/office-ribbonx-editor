@@ -1,0 +1,25 @@
+name: ASIMOV Ribbon Studio - Windows Build and Tests
+on:
+  push:
+    branches:
+      - feature/asimov-ribbon-preview-v0.1
+      - 'develop/**'
+  pull_request:
+    branches:
+      - master
+jobs:
+  windows-build-test:
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Restore
+        run: dotnet restore OfficeRibbonXEditor.slnx
+      - name: Build
+        run: dotnet build OfficeRibbonXEditor.slnx -c Release --no-restore
+      - name: Unit tests
+        run: dotnet test tests/UnitTests/UnitTests.csproj -c Release --no-build

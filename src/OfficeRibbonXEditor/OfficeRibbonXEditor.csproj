@@ -4,7 +4,7 @@
     <AssemblyName>OfficeRibbonXEditor</AssemblyName>
     <AssemblyTitle>Office RibbonX Editor</AssemblyTitle>
     <Authors>Fernando Andreu</Authors>
-    <Copyright>Copyright (c) 2025 Fernando Andreu</Copyright>
+    <Copyright>Copyright (c) $(CopyrightYear) Fernando Andreu</Copyright>
     <NeutralLanguage>en-GB</NeutralLanguage>
     <Description>A tool to edit the Custom UI part of Office documents.</Description>
     <PackageProjectUrl>https://github.com/fernandreu/office-ribbonx-editor</PackageProjectUrl>

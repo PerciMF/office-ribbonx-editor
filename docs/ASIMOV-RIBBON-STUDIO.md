@@ -20,3 +20,12 @@ dotnet build OfficeRibbonXEditor.slnx -c Release --no-restore
 dotnet test tests/UnitTests/UnitTests.csproj -c Release --no-build
 
 Final Ribbon rendering must be validated in Office; the WPF preview is approximate.
+
+## Preview UI (first slice)
+
+1. Open a customUI or customUI14 XML part from an Office document.
+2. Click Ribbon preview in the XML editor toolbar.
+3. The right panel displays tabs, groups, and control labels; callback names are tooltips.
+4. Edit XML and click Refresh to update. Close hides the panel.
+
+This is a read-only approximation, not yet a drag-and-drop or XML-writing designer.

@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using OfficeRibbonXEditor.Common.RibbonPreview;
 using OfficeRibbonXEditor.Events;
 using OfficeRibbonXEditor.Helpers;
 using OfficeRibbonXEditor.Interfaces;
@@ -83,6 +84,11 @@ public partial class EditorTab : UserControl
         _viewModel.DidSelectAll += OnDidSelectAll;
         _viewModel.DidFold += OnDidFold;
         _viewModel.DidDuplicateLine += OnDidDuplicateLine;
+
+        if (PreviewPanel.Visibility == Visibility.Visible)
+        {
+            RefreshPreview();
+        }
     }
 
     private void OnReadEditorInfo(object? sender, DataEventArgs<EditorInfo> e)
@@ -291,6 +297,49 @@ public partial class EditorTab : UserControl
         {
             // If the previous line finished with an open tag, add an indentation level to the next one 
             e.Text += new string(' ', Properties.Settings.Default.TabWidth);
+        }
+    }
+
+
+    private void OnTogglePreviewClick(object? sender, RoutedEventArgs e)
+    {
+        if (PreviewPanel.Visibility == Visibility.Visible)
+        {
+            OnClosePreviewClick(sender, e);
+            return;
+        }
+
+        PreviewColumn.Width = new GridLength(360);
+        PreviewSplitter.Visibility = Visibility.Visible;
+        PreviewPanel.Visibility = Visibility.Visible;
+        RefreshPreview();
+    }
+
+    private void OnRefreshPreviewClick(object? sender, RoutedEventArgs e) => RefreshPreview();
+
+    private void OnClosePreviewClick(object? sender, RoutedEventArgs e)
+    {
+        PreviewPanel.Visibility = Visibility.Collapsed;
+        PreviewSplitter.Visibility = Visibility.Collapsed;
+        PreviewColumn.Width = new GridLength(0);
+        PreviewTabs.ItemsSource = null;
+    }
+
+    private void RefreshPreview()
+    {
+        try
+        {
+            // Read the active editor buffer; never save or execute callbacks.
+            var preview = RibbonPreviewParser.Parse(Editor.Text);
+            PreviewTabs.ItemsSource = preview.Tabs;
+            PreviewStatus.Text = preview.Tabs.Count == 0
+                ? "No custom tabs found in this RibbonX part."
+                : $"Showing {preview.Tabs.Count} custom tab(s). Approximate rendering; callbacks are never executed.";
+        }
+        catch (Exception ex) when (ex is System.Xml.XmlException or FormatException)
+        {
+            PreviewTabs.ItemsSource = null;
+            PreviewStatus.Text = "Cannot preview invalid RibbonX XML: " + ex.Message;
         }
     }
 

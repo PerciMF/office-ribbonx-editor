@@ -12,16 +12,30 @@
              d:DesignHeight="450" 
              d:DesignWidth="800">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="0" x:Name="PreviewColumn"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="0" x:Name="ResultsRow"/>
         </Grid.RowDefinitions>
 
+        <DockPanel Grid.Row="0" Grid.Column="0" Margin="5,2" LastChildFill="False">
+            <Button Content="Ribbon preview" Padding="8,3"
+                    AutomationProperties.AutomationId="ToggleRibbonPreview"
+                    Click="OnTogglePreviewClick"/>
+            <TextBlock Margin="10,4,0,0" Foreground="Gray"
+                       Text="ASIMOV Studio - experimental preview"/>
+        </DockPanel>
+
         <sn:ScintillaWPF
             x:Name="Editor"
             AutomationProperties.AutomationId="Editor"
-            Grid.Row="0"
+            Grid.Row="1" Grid.Column="0"
             HorizontalAlignment="Stretch"
             FontFamily="Consolas"
             UpdateUI="OnScintillaUpdateUi"
@@ -30,14 +44,14 @@
             InsertCheck="OnEditorInsertCheck"
             Zoom="{Binding Zoom}"/>
 
-        <GridSplitter Grid.Row="1" 
+        <GridSplitter Grid.Row="2" Grid.Column="0" 
                       Height="4" 
                       x:Name="ResultsSplitter"
                       HorizontalAlignment="Stretch"
                       Visibility="Collapsed"
                       ResizeBehavior="PreviousAndNext"/>
 
-        <DockPanel Grid.Row="2">
+        <DockPanel Grid.Row="3" Grid.Column="0">
             <DockPanel DockPanel.Dock="Top">
                 <Label Name="ResultsHeader"/>
                 <Button DockPanel.Dock="Right"
@@ -55,5 +69,65 @@
                 x:Name="ResultsPanel"/>
         </DockPanel>
 
+        <GridSplitter x:Name="PreviewSplitter" Grid.Column="1" Grid.RowSpan="4"
+                      Width="4" Visibility="Collapsed" ResizeBehavior="PreviousAndNext"/>
+
+        <DockPanel x:Name="PreviewPanel" Grid.Column="2" Grid.RowSpan="4"
+                   Visibility="Collapsed" Background="#FFF7F7F7">
+            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="8">
+                <TextBlock Text="RibbonX Preview" FontWeight="Bold" VerticalAlignment="Center"
+                           Margin="0,0,8,0"/>
+                <Button Content="Refresh" Padding="7,3" Margin="0,0,5,0"
+                        Click="OnRefreshPreviewClick"/>
+                <Button Content="Close" Padding="7,3" Click="OnClosePreviewClick"/>
+            </StackPanel>
+            <TextBlock x:Name="PreviewStatus" DockPanel.Dock="Top" TextWrapping="Wrap"
+                       Foreground="#FF555555" Margin="8,0,8,8"
+                       Text="Visual simulation only; Office controls final layout."/>
+            <TabControl x:Name="PreviewTabs" Margin="5,0,5,5"
+                        AutomationProperties.AutomationId="RibbonPreviewTabs">
+                <TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Label}"/>
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
+                <TabControl.ContentTemplate>
+                    <DataTemplate>
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                      VerticalScrollBarVisibility="Auto">
+                            <ItemsControl ItemsSource="{Binding Groups}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <GroupBox Header="{Binding Label}" Margin="4" Padding="6">
+                                            <ItemsControl ItemsSource="{Binding Controls}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <WrapPanel Orientation="Horizontal"/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Button Content="{Binding Label}"
+                                                                ToolTip="{Binding Callback}"
+                                                                IsHitTestVisible="False"
+                                                                MinWidth="88" MinHeight="34"
+                                                                Margin="3" Padding="6"/>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </GroupBox>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </DataTemplate>
+                </TabControl.ContentTemplate>
+            </TabControl>
+        </DockPanel>
     </Grid>
 </UserControl>
